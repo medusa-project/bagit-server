@@ -4,6 +4,8 @@ gem 'sinatra'
 gem 'thin'
 gem 'bagit'
 gem 'uuid'
+gem 'datamapper'
+gem 'dm-postgres-adapter'
 
 group :test do
       gem 'cucumber'
