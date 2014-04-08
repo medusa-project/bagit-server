@@ -14,6 +14,12 @@ class BagitServerWorld
   include Capybara::DSL
   include RSpec::Expectations
   include RSpec::Matchers
+  include Rack::Test
+
+  def app
+    Capybara.app
+  end
+
 end
 
 World do
