@@ -28,6 +28,10 @@ def last_json
   page.source
 end
 
+def fixture_root
+  File.join(File.dirname(__FILE__), '..', 'fixtures')
+end
+
 World do
   BagitServerWorld.new
 end
