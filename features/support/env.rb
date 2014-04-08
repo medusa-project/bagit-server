@@ -2,11 +2,12 @@
 
 ENV['RACK_ENV'] = 'test'
 
-require File.join(File.dirname(__FILE__), '..', '..', 'bagit-server.rb')
+require File.join(File.dirname(__FILE__), '..', '..', 'bagit_server.rb')
 
 require 'capybara'
 require 'capybara/cucumber'
 require 'rspec'
+require 'json_spec/cucumber'
 
 Capybara.app = BagitServer
 
@@ -14,12 +15,16 @@ class BagitServerWorld
   include Capybara::DSL
   include RSpec::Expectations
   include RSpec::Matchers
-  include Rack::Test
+  include Rack::Test::Methods
 
   def app
     Capybara.app
   end
 
+end
+
+def last_json
+  page.source
 end
 
 World do

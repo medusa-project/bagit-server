@@ -1,0 +1,6 @@
+development:
+  db_connection_string: postgres://bagit:bagit@localhost/bagit_server_development
+test:
+  db_connection_string: postgres://bagit:bagit@localhost/bagit_server_test
+production:
+  db_connection_string: postgres://bagit:bagit@localhost/bagit_server_production

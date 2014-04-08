@@ -1,3 +1,3 @@
 #!/bin/bash
 
-thin -C bagit-server.yml -R config.ru start
+thin -C rack_config.yml -R config.ru start

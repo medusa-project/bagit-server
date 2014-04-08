@@ -3,3 +3,4 @@ tmp/
 bags/
 *~
 .idea/
+bagit_server.yml

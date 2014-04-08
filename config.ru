@@ -1,2 +1,2 @@
-require './bagit-server.rb'
+require './bagit_server.rb'
 run BagitServer
