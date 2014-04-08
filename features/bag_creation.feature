@@ -14,7 +14,15 @@ Feature: Bag creation
     And the content directory should exist for the bag 'test-bag' and version 'test-version'
 
   Scenario: Create a new bag not supplying a version
-    Given PENDING
+    When I post to '/bags' with JSON fields:
+      | id       |
+      | test-bag |
+    Then the response status should be 201
+    And the response header 'Location' should match '/bags/test-bag'
+    And the response header 'Location' should match some uuid
+    And there should be a bag with id 'test-bag'
+    And the bag with id 'test-bag' should have a version with id some uuid
+    And the content directory should exist for the bag 'test-bag' for every version
 
   Scenario: Try to create a new bag with version already in use
     Given PENDING

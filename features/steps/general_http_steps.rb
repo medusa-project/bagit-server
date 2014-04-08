@@ -7,5 +7,13 @@ Then(/^the response status should be (\d+)$/) do |code|
 end
 
 And(/^the response header '(.*)' should be '(.*)'$/) do |name, value|
-  expect(last_response.headers['Location']).to eq(value)
+  expect(last_response.headers[name]).to eq(value)
+end
+
+And(/^the response header '(.*)' should match '(.*)'$/) do |name, value|
+  expect(last_response.headers[name]).to match(value)
+end
+
+And(/^the response header '(.*)' should match some uuid$/) do |name|
+  expect(last_response.headers[name]).to contain_a_uuid
 end

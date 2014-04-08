@@ -18,7 +18,7 @@ class BagitServer < Sinatra::Base
     id = data['id']
     version_id = data['version']
     version = Bag.ensure_bag(id).ensure_version(version_id)
-    [201, {'Location' => "/bags/#{id}/#{version_id}"}, "Hello"]
+    [201, {'Location' => "/bags/#{version.url_path}"}, "Hello"]
   end
 
 end

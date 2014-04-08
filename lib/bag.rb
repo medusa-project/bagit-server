@@ -2,6 +2,7 @@ require 'dm-core'
 require 'dm-validations'
 require_relative 'version'
 require 'fileutils'
+require 'uuid'
 
 class Bag
   include DataMapper::Resource
@@ -26,11 +27,16 @@ class Bag
   end
 
   def ensure_version(version_id)
+    version_id ||= UUID.generate
     self.versions.first(version_id: version_id) || self.versions.create(version_id: version_id)
   end
 
   def path
     File.join(Bag.root_directory, self.id.to_s)
+  end
+
+  def url_path
+    self.bag_id
   end
 
 end

@@ -20,4 +20,8 @@ class Version < Object
   def path
     File.join(self.bag.path, self.id.to_s)
   end
+
+  def url_path
+    File.join(self.bag.url_path, self.version_id)
+  end
 end
