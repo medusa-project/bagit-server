@@ -26,6 +26,6 @@ class Version < Object
   end
 
   def url_path
-    File.join(self.bag.url_path, self.version_id)
+    File.join(self.bag.url_path, 'versions', self.version_id)
   end
 end

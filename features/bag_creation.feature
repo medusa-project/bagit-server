@@ -8,7 +8,7 @@ Feature: Bag creation
       | id       | version      |
       | test-bag | test-version |
     Then the response status should be 201
-    And the response header 'Location' should be '/bags/test-bag/test-version'
+    And the response header 'Location' should be '/bags/test-bag/versions/test-version'
     And there should be a bag with id 'test-bag'
     And the bag with id 'test-bag' should have a version with id 'test-version'
     And the content directory should exist for the bag 'test-bag' and version 'test-version'
