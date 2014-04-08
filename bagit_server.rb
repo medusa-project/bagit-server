@@ -15,9 +15,13 @@ class BagitServer < Sinatra::Base
 
   post '/bags' do
     data = JSON.parse(request.body.read)
-    id = data['id']
+    bag_id = data['id']
+    return [400, "Invalid id: #{bag_id}"] if bag_id.nil? or bag_id.empty?
     version_id = data['version']
-    version = Bag.ensure_bag(id).ensure_version(version_id)
+    bag = Bag.ensure_bag(bag_id)
+    return [409, "Version already exists: #{version_id}"] if bag and bag.versions.first(version_id: version_id)
+    version = bag.ensure_version(version_id)
+    p = version.url_path
     [201, {'Location' => "/bags/#{version.url_path}"}, "Hello"]
   end
 

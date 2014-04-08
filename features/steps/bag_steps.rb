@@ -14,3 +14,8 @@ end
 And(/^the content directory should exist for the bag '(.*)' for every version$/) do |bag_id|
   Bag.first(bag_id: bag_id).versions.each {|version| expect(File.directory?(version.path)).to be_true}
 end
+
+Given(/^the bag with id '(.*)' has a version with id '(.*)'$/) do |bag_id, version_id|
+  bag = FactoryGirl.create(:bag, :bag_id => bag_id)
+  FactoryGirl.create(:version, :bag => bag, :version_id => version_id)
+end

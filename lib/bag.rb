@@ -27,7 +27,7 @@ class Bag
   end
 
   def ensure_version(version_id)
-    version_id ||= UUID.generate
+    version_id = UUID.generate if (version_id.nil? or version_id.empty?)
     self.versions.first(version_id: version_id) || self.versions.create(version_id: version_id)
   end
 

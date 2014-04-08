@@ -25,7 +25,21 @@ Feature: Bag creation
     And the content directory should exist for the bag 'test-bag' for every version
 
   Scenario: Try to create a new bag with version already in use
-    Given PENDING
+    Given the bag with id 'test-bag' has a version with id 'version'
+    When I post to '/bags' with JSON fields:
+      | id       | version |
+      | test-bag | version |
+    Then the response status should be 409
 
   Scenario: Try to create a new bag without supplying an id
-    Given PENDING
+    When I post to '/bags' with JSON fields:
+      | no_id     |
+      | something |
+    Then the response status should be 400
+
+  Scenario: Try to create a new bag with a blank id
+    When I post to '/bags' with JSON fields:
+      | id |
+      |    |
+    Then the response status should be 400
+
