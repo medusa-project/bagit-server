@@ -10,4 +10,5 @@ group :test do
       gem 'cucumber-sinatra'
       gem 'rack-test'
       gem 'rspec'
+      gem 'capybara'
 end
