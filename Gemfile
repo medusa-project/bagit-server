@@ -13,4 +13,9 @@ group :test do
       gem 'rack-test'
       gem 'rspec'
       gem 'capybara'
+      gem 'factory_girl'
+      gem 'shoulda-matchers'
+      gem 'database_cleaner'
+      gem 'simplecov'
+      gem 'json_spec'
 end
