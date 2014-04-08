@@ -5,8 +5,10 @@ require 'dm-migrations'
 require 'dm-transactions'
 require 'json'
 require_relative 'lib/bag'
+require 'sinatra/namespace'
 
 class BagitServer < Sinatra::Base
+  register Sinatra::Namespace
 
   configure do
     set :configuration, YAML.load_file('./bagit_server.yml')[settings.environment.to_s]
@@ -18,19 +20,38 @@ class BagitServer < Sinatra::Base
   post '/bags' do
     data = JSON.parse(request.body.read)
     bag_id = data['id']
-    return [400, "Invalid id: #{bag_id}"] if bag_id.nil? or bag_id.empty?
+    halt(400, "Invalid id: #{bag_id}") if bag_id.nil? or bag_id.empty?
     version_id = data['version']
     bag = Bag.ensure_bag(bag_id)
-    return [409, "Version already exists: #{version_id}"] if bag and bag.versions.first(version_id: version_id)
+    halt(409, "Version already exists: #{version_id}") if bag and bag.versions.first(version_id: version_id)
     version = bag.ensure_version(version_id)
-    return [201, {'Location' => "/bags/#{version.url_path}"}, "Hello"]
+    [201, {'Location' => "/bags/#{version.url_path}"}, "Hello"]
   end
 
-  delete '/bags/:bag_id' do |bag_id|
-    bag = Bag.first(bag_id: bag_id)
-    return [404, "Bag #{bag_id} not found"] unless bag
-    bag.destroy
-    return [200, "Bag deleted"]
+  namespace '/bags/:bag_id' do
+
+    before do
+      @bag = Bag.first(bag_id: params[:bag_id])
+      halt(404, "Bag #{params[:bag_id]} not found") unless @bag
+    end
+
+    delete do
+      @bag.destroy
+      return [200, "Bag deleted"]
+    end
+
+    namespace '/versions/:version_id' do
+      before do
+        @version = @bag.versions.first(version_id: params[:version_id])
+        halt(404, "Version #{params[:version_id]} not found") unless @version
+      end
+
+      #for these files there are no prerequisites
+      put /^(bagit\.txt|bag-info.txt)$/ do |file|
+
+      end
+
+    end
   end
 
 end
