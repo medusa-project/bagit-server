@@ -28,4 +28,12 @@ class Version < Object
   def url_path
     File.join(self.bag.url_path, 'versions', self.version_id)
   end
+
+  def write_to_path(path, io)
+    #TODO check that the file join below winds up inside the content directory, e.g. if '..' or the like are used
+    File.open(File.join(self.path, path), 'w:binary') do |f|
+      f.write(io.read)
+    end
+  end
+
 end

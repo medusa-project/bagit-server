@@ -1,6 +1,6 @@
 log/
 tmp/
-bags/
+bags*/
 *~
 .idea/
 bagit_server.yml

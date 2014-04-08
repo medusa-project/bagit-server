@@ -7,11 +7,11 @@ Feature: Bag population
     Given the bag with id 'test-bag' has a version with id 'test'
 
   Scenario: Upload bagit.txt
-    When I post '/bags/test-bag/versions/test/bagit.txt' using file 'bagit.txt' from fixture 'good-bag'
-    Then the response status should be 200
+    When I put '/bags/test-bag/versions/test/bagit.txt' using file 'bagit.txt' from fixture 'good-bag'
+    Then the response status should be 201
     And the version with id 'test' for the bag with id 'test-bag' should have content file 'bagit.txt'
 
   Scenario: Upload bag-info.txt
-    When I post '/bags/test-bag/versions/test/bag-info.txt' using file 'bag-info.txt' from fixture 'good-bag'
-    Then the response status should be 200
+    When I put '/bags/test-bag/versions/test/bag-info.txt' using file 'bag-info.txt' from fixture 'good-bag'
+    Then the response status should be 201
     And the version with id 'test' for the bag with id 'test-bag' should have content file 'bag-info.txt'

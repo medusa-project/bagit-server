@@ -47,8 +47,14 @@ class BagitServer < Sinatra::Base
       end
 
       #for these files there are no prerequisites
-      put /^(bagit\.txt|bag-info.txt)$/ do |file|
+      put '/bagit.txt' do
+        @version.write_to_path('bagit.txt', request.body)
+        [201, 'Content written']
+      end
 
+      put '/bag-info.txt' do
+        @version.write_to_path('bag-info.txt', request.body)
+        [201, 'Content written']
       end
 
     end

@@ -8,5 +8,5 @@ end
 
 And(/^the version with id '(.*)' for the bag with id '(.*)' should have content file '(.*)'$/) do |version_id, bag_id, path|
   version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
-  File.exists?(File.join(version.path, path))
+  expect(File.exists?(File.join(version.path, path))).to be_true
 end
