@@ -2,6 +2,8 @@
 require 'sinatra/base'
 require 'dm-core'
 require 'dm-migrations'
+require 'dm-transactions'
+require 'json'
 require_relative 'lib/bag'
 
 class BagitServer < Sinatra::Base
@@ -21,8 +23,14 @@ class BagitServer < Sinatra::Base
     bag = Bag.ensure_bag(bag_id)
     return [409, "Version already exists: #{version_id}"] if bag and bag.versions.first(version_id: version_id)
     version = bag.ensure_version(version_id)
-    p = version.url_path
-    [201, {'Location' => "/bags/#{version.url_path}"}, "Hello"]
+    return [201, {'Location' => "/bags/#{version.url_path}"}, "Hello"]
+  end
+
+  delete '/bags/:bag_id' do |bag_id|
+    bag = Bag.first(bag_id: bag_id)
+    return [404, "Bag #{bag_id} not found"] unless bag
+    bag.destroy
+    return [200, "Bag deleted"]
   end
 
 end

@@ -1,5 +1,9 @@
-When(/^I post to '(.*)' with JSON fields:$/) do |url, table|
+When(/^I post '(.*)' with JSON fields:$/) do |url, table|
   post url, table.hashes.first.to_json
+end
+
+When(/^I delete '(.*)'$/) do |url|
+  delete url
 end
 
 Then(/^the response status should be (\d+)$/) do |code|

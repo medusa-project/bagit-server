@@ -1,5 +1,6 @@
 require 'dm-core'
 require 'dm-validations'
+require 'dm-constraints'
 require_relative 'version'
 require 'fileutils'
 require 'uuid'
@@ -12,10 +13,14 @@ class Bag
 
   validates_presence_of :bag_id
 
-  has n, :versions
+  has n, :versions, :constraint => :destroy
 
   before :create do
     FileUtils.mkdir_p(self.path)
+  end
+
+  after :destroy do
+    FileUtils.rm_rf(self.path)
   end
 
   def self.root_directory

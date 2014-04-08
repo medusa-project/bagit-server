@@ -17,6 +17,10 @@ class Version < Object
     FileUtils.mkdir_p(self.path)
   end
 
+  after :destroy do
+    FileUtils.rm_rf(self.path)
+  end
+
   def path
     File.join(self.bag.path, self.id.to_s)
   end

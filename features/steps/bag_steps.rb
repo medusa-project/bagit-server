@@ -19,3 +19,7 @@ Given(/^the bag with id '(.*)' has a version with id '(.*)'$/) do |bag_id, versi
   bag = FactoryGirl.create(:bag, :bag_id => bag_id)
   FactoryGirl.create(:version, :bag => bag, :version_id => version_id)
 end
+
+And(/^there should not be a bag with id '(.*)'$/) do |bag_id|
+  expect(Bag.first(bag_id: bag_id)).to be_nil
+end
