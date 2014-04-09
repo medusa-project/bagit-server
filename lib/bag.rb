@@ -19,6 +19,8 @@ class Bag
     FileUtils.mkdir_p(self.path)
   end
 
+  #TODO this could take some time. A better approach might be to simply move the directory
+  #somewhere else on the same volume and then to delete via a cron job or another service
   after :destroy do
     FileUtils.rm_rf(self.path)
   end
