@@ -36,3 +36,8 @@ And(/^the version with id '(.*)' for the bag with id '(.*)' should not have an? 
   manifest = version.manifests.first(algorithm: checksum_algorithm)
   expect(manifest).to be_nil
 end
+
+And(/^the version with id '(.*)' for the bag with id '(.*)' updates its manifest '(.*)'$/) do |version_id, bag_id, manifest_file|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  version.update_manifest_if_manifest(manifest_file)
+end

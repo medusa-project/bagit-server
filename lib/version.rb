@@ -21,6 +21,8 @@ class Version < Object
     FileUtils.mkdir_p(self.path)
   end
 
+  #TODO this could take some time - a better approach may be to move this to a trash directory
+  #and then clean that up asynchronously
   after :destroy do
     FileUtils.rm_rf(self.path)
   end
