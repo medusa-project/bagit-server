@@ -16,15 +16,15 @@ Feature: Bag population
     Then the response status should be 201
     And the version with id 'test' for the bag with id 'test-bag' should have content file 'bag-info.txt'
 
-  Scenario: Upload manifest without bag files being present
-    When I put '/bags/test-bag/versions/test/contents/manifest-md5.txt' using file 'manifest-md5.txt' from fixture 'good-bag'
+  Scenario: Upload top level file without bag files being present
+    When I put '/bags/test-bag/versions/test/contents/extra-file' using file 'extra-file' from fixture 'good-bag'
     Then the response status should be 400
-    And the version with id 'test' for the bag with id 'test-bag' should not have content file 'manifest-md5.txt'
+    And the version with id 'test' for the bag with id 'test-bag' should not have content file 'extra-file'
 
-  Scenario: Upload manifest with bag files being present
+  Scenario: Upload top level file with bag files being present
     Given the version with id 'test' for the bag with id 'test-bag' already has files from fixture 'good-bag':
       | bagit.txt | bag-info.txt |
-    When I put '/bags/test-bag/versions/test/contents/manifest-md5.txt' using file 'manifest-md5.txt' from fixture 'good-bag'
+    When I put '/bags/test-bag/versions/test/contents/extra-file' using file 'extra-file' from fixture 'good-bag'
     Then the response status should be 201
-    And the version with id 'test' for the bag with id 'test-bag' should have content file 'manifest-md5.txt'
+    And the version with id 'test' for the bag with id 'test-bag' should have content file 'extra-file'
 
