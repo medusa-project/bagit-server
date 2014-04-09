@@ -31,9 +31,22 @@ class Version < Object
 
   def write_to_path(path, io)
     #TODO check that the file join below winds up inside the content directory, e.g. if '..' or the like are used
+    #TODO write in a way that doesn't require us to read the whole io stream at once
     File.open(File.join(self.path, path), 'w:binary') do |f|
       f.write(io.read)
     end
+  end
+
+  def has_bag_files?
+    File.exists?(self.bagit_file_path) and File.exists?(self.bag_info_file_path)
+  end
+
+  def bagit_file_path
+    File.join(self.path, 'bagit.txt')
+  end
+
+  def bag_info_file_path
+    File.join(self.path, 'bag-info.txt')
   end
 
 end

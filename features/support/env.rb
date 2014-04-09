@@ -32,6 +32,10 @@ def fixture_root
   File.join(File.dirname(__FILE__), '..', 'fixtures')
 end
 
+def fixture_path(fixture, path)
+  File.join(fixture_root, fixture, path)
+end
+
 World do
   BagitServerWorld.new
 end

@@ -64,11 +64,15 @@ class BagitServer < Sinatra::Base
           [201, 'Content written']
         end
 
-        put '/:tag_file' do |tag_file|
-           raise "Not yet implemented"
+        put '/:tag_file' do
+          halt [400, 'Version does not yet have both bagit.txt and bag-info.txt '] unless @version.has_bag_files?
+          file = params[:tag_file]
+          @version.write_to_path(file, request.body)
+          [201, 'Content written']
         end
 
-        put '/data/*' do |splat|
+        put '/data/*' do
+          splat = params[:splat]
           raise "Not yet implemented"
         end
 
