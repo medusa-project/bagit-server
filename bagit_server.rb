@@ -67,8 +67,13 @@ class BagitServer < Sinatra::Base
         put '/:tag_file' do
           halt [400, 'Version does not yet have both bagit.txt and bag-info.txt '] unless @version.has_bag_files?
           file = params[:tag_file]
-          @version.write_to_path(file, request.body)
-          @version.update_manifest_if_manifest(file)
+          begin
+            @version.write_to_path(file, request.body) do
+              @version.update_manifest_if_manifest(file)
+            end
+          rescue ManifestError => e
+            halt [400, "Manifest Error: #{e.message}"]
+          end
           [201, 'Content written']
         end
 

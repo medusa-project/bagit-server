@@ -3,6 +3,7 @@ require 'dm-validations'
 require 'dm-constraints'
 require 'fileutils'
 require_relative 'manifest'
+require 'uuid'
 
 class Version < Object
   include DataMapper::Resource
@@ -32,12 +33,40 @@ class Version < Object
     File.join(self.bag.url_path, 'versions', self.version_id)
   end
 
+  #We first detect if the file to be written exists.
+  #If so we move it out of the way; if not we note its nonexistence.
+  #We then write the new file.
+  #Then if a block is supplied we execute in a transaction.
+  # if we get any errors we roll back the transaction, remove the new file,
+  # restore the old copy of the file (if it exists), and reraise the exception.
+  # If we succeed we remove the old version if we stored it.
+  #If no block is supplied we just remove the old file.
   def write_to_path(path, io)
     #TODO check that the file join below winds up inside the content directory, e.g. if '..' or the like are used
     #TODO write in a way that doesn't require us to read the whole io stream at once
+    content_file = File.join(self.path, path)
+    backup_file = nil
+    if File.exists?(content_file)
+      backup_file = File.join(Bag.tmp_directory, UUID.generate)
+      FileUtils.move(content_file, backup_file)
+    end
     File.open(File.join(self.path, path), 'w:binary') do |f|
       f.write(io.read)
     end
+    if block_given?
+      Version.transaction do |t|
+        begin
+          yield
+        rescue Exception
+          t.rollback
+          File.delete(content_file) if File.exists?(content_file)
+          FileUtils.move(backup_file, content_file) if backup_file and File.exists?(backup_file)
+          raise
+        end
+      end
+    end
+  ensure
+    File.delete(backup_file) if backup_file and File.exists?(backup_file)
   end
 
   def has_bag_files?

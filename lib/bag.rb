@@ -29,6 +29,13 @@ class Bag
     @@root_directory ||= "bags-#{BagitServer.settings.environment}"
   end
 
+  #we set this up inside of the environment's bag directory so that move operations will be fast
+  def self.tmp_directory
+    @@tmp_directory ||= File.join(self.root_directory, 'tmp')
+    mkdir_p(@@tmp_directory)
+    @@tmp_directory
+  end
+
   def self.ensure_bag(bag_id)
     self.first(bag_id: bag_id) || self.create(bag_id: bag_id)
   end
