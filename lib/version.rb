@@ -41,7 +41,7 @@ class Version < Object
   # restore the old copy of the file (if it exists), and reraise the exception.
   # If we succeed we remove the old version if we stored it.
   #If no block is supplied we just remove the old file.
-  def write_to_path(path, io)
+  def protected_write_to_path(path, io)
     #TODO check that the file join below winds up inside the content directory, e.g. if '..' or the like are used
     #TODO write in a way that doesn't require us to read the whole io stream at once
     content_file = File.join(self.path, path)
