@@ -60,8 +60,13 @@ class BagitServer < Sinatra::Base
         end
 
         put '/:tag_file' do |tag_file|
-
+           raise "Not yet implemented"
         end
+
+        put '/data/*' do |splat|
+          raise "Not yet implemented"
+        end
+
 
       end
     end
