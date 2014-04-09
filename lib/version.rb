@@ -1,6 +1,8 @@
 require 'dm-core'
 require 'dm-validations'
+require 'dm-constraints'
 require 'fileutils'
+require_relative 'manifest'
 
 class Version < Object
   include DataMapper::Resource
@@ -10,6 +12,7 @@ class Version < Object
   property :bag_id, Integer, :required => true
 
   belongs_to :bag
+  has n, :manifests, :constraint => :destroy
 
   validates_presence_of :version_id
 
@@ -47,6 +50,14 @@ class Version < Object
 
   def bag_info_file_path
     File.join(self.path, 'bag-info.txt')
+  end
+
+  #if the file is a manifest then update it. If it doesn't exist, create it.
+  def update_manifest_if_manifest(file)
+    return unless file.match(/manifest-(\w+)\.txt/)
+    algorithm = $1
+    manifest = self.manifests.first(algorithm: algorithm) || self.manifests.create(algorithm: algorithm)
+    manifest.update_from_file
   end
 
 end

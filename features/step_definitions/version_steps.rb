@@ -24,3 +24,15 @@ Given(/^the version with id '(.*)' for the bag with id '(.*)' already has files 
   end
 end
 
+And(/^the version with id '(.*)' for the bag with id '(.*)' should have an? '(.*)' manifest with (\d+) files$/) do |version_id, bag_id, checksum_algorithm, file_count|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  manifest = version.manifests.first(algorithm: checksum_algorithm)
+  expect(manifest).to be_a(Manifest)
+  expect(manifest.manifest_files.count.to_s).to eq(file_count)
+end
+
+And(/^the version with id '(.*)' for the bag with id '(.*)' should not have an? '(.*)' manifest$/) do |version_id, bag_id, checksum_algorithm|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  manifest = version.manifests.first(algorithm: checksum_algorithm)
+  expect(manifest).to be_nil
+end

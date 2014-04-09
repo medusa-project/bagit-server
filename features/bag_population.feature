@@ -28,3 +28,18 @@ Feature: Bag population
     Then the response status should be 201
     And the version with id 'test' for the bag with id 'test-bag' should have content file 'extra-file'
 
+  Scenario: Upload manifest file
+    Given the version with id 'test' for the bag with id 'test-bag' already has files from fixture 'good-bag':
+      | bagit.txt | bag-info.txt |
+    When I put '/bags/test-bag/versions/test/contents/manifest-md5.txt' using file 'manifest-md5.txt' from fixture 'good-bag'
+    Then the response status should be 201
+    And the version with id 'test' for the bag with id 'test-bag' should have content file 'manifest-md5.txt'
+    And the version with id 'test' for the bag with id 'test-bag' should have an 'md5' manifest with 2 files
+
+  Scenario: Upload invalid manifest file
+    Given the version with id 'test' for the bag with id 'test-bag' already has files from fixture 'good-bag':
+      | bagit.txt | bag-info.txt |
+    When I put '/bags/test-bag/versions/test/contents/manifest-md5.txt' using file 'bag-info.txt' from fixture 'good-bag'
+    Then the response status should be 400
+    And the version with id 'test' for the bag with id 'test-bag' should not have content file 'manifest-md5.txt'
+    And the version with id 'test' for the bag with id 'test-bag' should not have an 'md5' manifest
