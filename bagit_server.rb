@@ -46,18 +46,25 @@ class BagitServer < Sinatra::Base
         halt(404, "Version #{params[:version_id]} not found") unless @version
       end
 
-      #for these files there are no prerequisites
-      put '/bagit.txt' do
-        @version.write_to_path('bagit.txt', request.body)
-        [201, 'Content written']
-      end
+      namespace '/contents' do
+        #for these files there are no prerequisites
+        #TODO possibly use custom matcher
+        put '/bagit.txt' do
+          @version.write_to_path('bagit.txt', request.body)
+          [201, 'Content written']
+        end
 
-      put '/bag-info.txt' do
-        @version.write_to_path('bag-info.txt', request.body)
-        [201, 'Content written']
-      end
+        put '/bag-info.txt' do
+          @version.write_to_path('bag-info.txt', request.body)
+          [201, 'Content written']
+        end
 
+        put '/:tag_file' do |tag_file|
+
+        end
+
+      end
     end
-  end
 
+  end
 end
