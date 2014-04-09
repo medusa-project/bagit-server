@@ -6,6 +6,7 @@ require 'dm-transactions'
 require 'json'
 require_relative 'lib/bag'
 require 'sinatra/namespace'
+require 'sinatra/reloader'
 
 class BagitServer < Sinatra::Base
   register Sinatra::Namespace
@@ -15,6 +16,10 @@ class BagitServer < Sinatra::Base
     DataMapper.setup(:default, settings.configuration['db_connection_string'])
     DataMapper.finalize
     DataMapper.auto_upgrade!
+  end
+
+  configure :development do
+    register Sinatra::Reloader
   end
 
   post '/bags' do
