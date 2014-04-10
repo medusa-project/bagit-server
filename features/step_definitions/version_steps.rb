@@ -24,6 +24,11 @@ Given(/^the version with id '(.*)' for the bag with id '(.*)' already has files 
   end
 end
 
+And(/^the version with id '(.*)' for the bag with id '(.*)' has contents the fixture '(.*)'$/) do |version_id, bag_id, fixture|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  copy_fixture(fixture, version.path)
+end
+
 And(/^the version with id '(.*)' for the bag with id '(.*)' should have an? '(.*)' manifest with (\d+) files$/) do |version_id, bag_id, checksum_algorithm, file_count|
   version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
   manifest = version.manifests.first(algorithm: checksum_algorithm)
@@ -40,4 +45,11 @@ end
 And(/^the version with id '(.*)' for the bag with id '(.*)' updates its manifest '(.*)'$/) do |version_id, bag_id, manifest_file|
   version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
   version.update_manifest_if_manifest(manifest_file)
+end
+
+def copy_fixture(fixture, path)
+  Dir[fixture_path(fixture, '*')].each do |entry|
+    next if entry == '.' or entry == '..'
+    FileUtils.cp_r(entry, path)
+  end
 end

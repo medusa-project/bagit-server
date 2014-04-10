@@ -6,6 +6,10 @@ When(/^I delete '(.*)'$/) do |url|
   delete url
 end
 
+When(/^I get '(.*)'$/) do |url|
+  get url
+end
+
 When(/^I put '(.*)' using file '(.*)' from fixture '(.*)'$/) do |url, file, fixture|
   put url, nil, {:input => fixture_file_content(fixture, file), "Content-Type" => 'application/octet-stream'}
 end
@@ -24,6 +28,10 @@ end
 
 And(/^the response header '(.*)' should match some uuid$/) do |name|
   expect(last_response.headers[name]).to contain_a_uuid
+end
+
+And(/^the response body should equal the file '(.*)' from the fixture '(.*)'$/) do |path, fixture|
+  expect(last_response.body).to eq(fixture_file_content(fixture, path))
 end
 
 def fixture_file_content(fixture, file)

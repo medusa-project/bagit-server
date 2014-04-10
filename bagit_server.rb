@@ -94,6 +94,15 @@ class BagitServer < Sinatra::Base
           [201, 'Content written']
         end
 
+        get '/*' do
+          path = File.join(params[:splat])
+          full_path = File.join(@version.path, path)
+          halt [404, "File #{path} not found"] unless File.exists?(full_path)
+          File.open(full_path) do |file|
+            [200, {'Content-Type' => 'application/octet-stream'}, file.read]
+          end
+        end
+
       end
     end
 
