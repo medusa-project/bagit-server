@@ -47,7 +47,7 @@ class Version < Object
   def protected_write_to_path(path, io)
     #TODO check that the file join below winds up inside the content directory, e.g. if '..' or the like are used
     #TODO write in a way that doesn't require us to read the whole io stream at once
-    content_file = File.join(self.path, path)
+    content_file = self.content_path(path)
     FileUtils.mkdir_p(File.dirname(content_file))
     backup_file = nil
     if File.exists?(content_file)
@@ -98,10 +98,34 @@ class Version < Object
 
   #if the file is a manifest then update it. If it doesn't exist, create it.
   def update_manifest_if_manifest(file)
-    return unless file.match(/manifest-(\w+)\.txt/)
-    algorithm = $1
+    return unless algorithm = manifest_algorithm_or_nil(file)
     manifest = self.manifests.first(algorithm: algorithm) || self.manifests.create(algorithm: algorithm)
     manifest.update_from_file
+  end
+
+  #Return nil if the path is not for a manifest; otherwise retun the algorithm string
+  def manifest_algorithm_or_nil(path)
+    path.match(/^manifest-(\w+)\.txt$/)
+    $1
+  end
+
+  def read_content(path)
+    full_path = self.content_path(path)
+    raise FileNotFound unless File.exists?(full_path)
+    File.read(full_path)
+  end
+
+  def delete_content(path)
+    full_path = self.content_path(path)
+    raise FileNotFound unless File.exists?(full_path)
+    File.delete(full_path)
+    if algorithm = manifest_algorithm_or_nil(path)
+      self.manifests.first(algorithm: algorithm).destroy
+    end
+  end
+
+  def content_path(path)
+    File.join(self.path, path)
   end
 
 end

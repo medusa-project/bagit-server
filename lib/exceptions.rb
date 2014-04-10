@@ -9,3 +9,7 @@ end
 class BadManifestException < Exception
 
 end
+
+class FileNotFound < Exception
+
+end
