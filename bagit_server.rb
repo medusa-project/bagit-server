@@ -71,15 +71,27 @@ class BagitServer < Sinatra::Base
             @version.protected_write_to_path(file, request.body) do
               @version.update_manifest_if_manifest(file)
             end
-          rescue ManifestError => e
+          rescue BadManifestException => e
             halt [400, "Manifest Error: #{e.message}"]
           end
           [201, 'Content written']
         end
 
         put '/data/*' do
+          halt [400, 'Version does not yet have both bagit.txt and bag-info.txt'] unless @version.has_bag_files?
+          halt [400, 'Version does not have a manifest'] unless @version.manifests.count > 0
           splat = params[:splat]
-          raise "Not yet implemented"
+          path = File.join('data' , splat)
+          begin
+            @version.protected_write_to_path(path, request.body) do
+              @version.verify_data_file(path)
+            end
+          rescue FileNotInManifestException
+            halt [400, "#{path} is not in any manifest"]
+          rescue IncorrectChecksumException
+            halt [400, 'Incorrect checksum']
+          end
+          [201, 'Content written']
         end
 
       end

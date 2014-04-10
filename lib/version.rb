@@ -3,6 +3,7 @@ require 'dm-validations'
 require 'dm-constraints'
 require 'fileutils'
 require_relative 'manifest'
+require_relative 'exceptions'
 require 'uuid'
 
 class Version < Object
@@ -47,6 +48,7 @@ class Version < Object
     #TODO check that the file join below winds up inside the content directory, e.g. if '..' or the like are used
     #TODO write in a way that doesn't require us to read the whole io stream at once
     content_file = File.join(self.path, path)
+    FileUtils.mkdir_p(File.dirname(content_file))
     backup_file = nil
     if File.exists?(content_file)
       backup_file = File.join(Bag.tmp_directory, UUID.generate)
@@ -73,6 +75,17 @@ class Version < Object
 
   def has_bag_files?
     File.exists?(self.bagit_file_path) and File.exists?(self.bag_info_file_path)
+  end
+
+  #if the file is in no manifest or fails checksumming for a manifest it is in then raise an exception. Otherwise true.
+  def verify_data_file(path)
+    containing_manifests = self.manifests.select {|manifest| manifest.manifest_files.first(path: path)}
+    raise FileNotInManifestException unless containing_manifests.size > 0
+    bad_checksum_manifest = containing_manifests.detect do |manifest|
+      manifest.digest(path) != manifest.manifest_files.first(path: path).checksum
+    end
+    raise IncorrectChecksumException if bad_checksum_manifest
+    true
   end
 
   def bagit_file_path

@@ -2,10 +2,9 @@ require 'dm-core'
 require 'dm-validations'
 require 'dm-constraints'
 require_relative 'manifest_file'
+require_relative 'exceptions'
 require 'set'
-
-class ManifestError < RuntimeError
-end
+require 'digest'
 
 class Manifest < Object
   include DataMapper::Resource
@@ -27,9 +26,9 @@ class Manifest < Object
     end
     file_hash = Hash.new.tap do |h|
       File.open(self.path).each_line do |line|
-        raise(ManifestError, "Bad manifest entry: #{line}") unless line.match(/^(\h+)\s+\*?(.*)$/)
+        raise(BadManifestException, "Bad manifest entry: #{line}") unless line.match(/^(\h+)\s+\*?(.*)$/)
         checksum, path = $1, $2
-        raise(ManifestError, "Repeat manifest path: #{line}") if h[path]
+        raise(BadManifestException, "Repeat manifest path: #{line}") if h[path]
         h[path] = checksum
       end
     end
@@ -55,6 +54,11 @@ class Manifest < Object
 
   def path
     File.join(self.version.path, self.file_name)
+  end
+
+  #for now we assume we only use an algorithm that is available via Ruby's Digest::<ALG> in the standard library
+  def digest(path)
+    Kernel.const_get("Digest::#{self.algorithm.upcase}").send(:file, File.join(self.version.path, path))
   end
 
 end
