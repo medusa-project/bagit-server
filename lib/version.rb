@@ -47,25 +47,26 @@ class Version < Object
   def protected_write_to_path(path, io)
     #TODO check that the file join below winds up inside the content directory, e.g. if '..' or the like are used
     #TODO write in a way that doesn't require us to read the whole io stream at once
-    content_file = self.content_path(path)
-    FileUtils.mkdir_p(File.dirname(content_file))
     backup_file = nil
-    if File.exists?(content_file)
-      backup_file = File.join(Bag.tmp_directory, UUID.generate)
-      FileUtils.move(content_file, backup_file)
-    end
-    File.open(File.join(self.path, path), 'w:binary') do |f|
-      f.write(io.read)
-    end
-    if block_given?
-      Version.transaction do |t|
-        begin
-          yield
-        rescue Exception
-          t.rollback
-          File.delete(content_file) if File.exists?(content_file)
-          FileUtils.move(backup_file, content_file) if backup_file and File.exists?(backup_file)
-          raise
+    with_content_path_for(path) do |content_path|
+      FileUtils.mkdir_p(File.dirname(content_path))
+      if File.exists?(content_path)
+        backup_file = File.join(Bag.tmp_directory, UUID.generate)
+        FileUtils.move(content_path, backup_file)
+      end
+      File.open(File.join(self.path, path), 'w:binary') do |f|
+        f.write(io.read)
+      end
+      if block_given?
+        Version.transaction do |t|
+          begin
+            yield
+          rescue Exception
+            t.rollback
+            File.delete(content_path) if File.exists?(content_path)
+            FileUtils.move(backup_file, content_path) if backup_file and File.exists?(backup_file)
+            raise
+          end
         end
       end
     end
@@ -79,7 +80,7 @@ class Version < Object
 
   #if the file is in no manifest or fails checksumming for a manifest it is in then raise an exception. Otherwise true.
   def verify_data_file(path)
-    containing_manifests = self.manifests.select {|manifest| manifest.manifest_files.first(path: path)}
+    containing_manifests = self.manifests.select { |manifest| manifest.manifest_files.first(path: path) }
     raise FileNotInManifestException unless containing_manifests.size > 0
     bad_checksum_manifest = containing_manifests.detect do |manifest|
       manifest.digest(path) != manifest.manifest_files.first(path: path).checksum
@@ -110,22 +111,25 @@ class Version < Object
   end
 
   def read_content(path)
-    full_path = self.content_path(path)
-    raise FileNotFound unless File.exists?(full_path)
-    File.read(full_path)
-  end
-
-  def delete_content(path)
-    full_path = self.content_path(path)
-    raise FileNotFound unless File.exists?(full_path)
-    File.delete(full_path)
-    if algorithm = manifest_algorithm_or_nil(path)
-      self.manifests.first(algorithm: algorithm).destroy
+    with_content_path_for(path, error_unless_exists: true) do |full_path|
+      File.read(full_path)
     end
   end
 
-  def content_path(path)
-    File.join(self.path, path)
+  def delete_content(path)
+    with_content_path_for(path, error_unless_exists: true) do |full_path|
+      raise FileNotFound unless File.exists?(full_path)
+      File.delete(full_path)
+      if algorithm = manifest_algorithm_or_nil(path)
+        self.manifests.first(algorithm: algorithm).destroy
+      end
+    end
+  end
+
+  def with_content_path_for(path, error_unless_exists: nil)
+    content_path = File.join(self.path, path)
+    raise FileNotFound if error_unless_exists and !File.exists?(content_path)
+    yield content_path
   end
 
 end
