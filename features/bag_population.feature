@@ -53,3 +53,20 @@ Feature: Bag population
     And the version with id 'test' for the bag with id 'test-bag' should have content file 'manifest-md5.txt'
     And the version with id 'test' for the bag with id 'test-bag' should have an 'md5' manifest with 2 files
 
+  Scenario: Try to upload content file without bag files and manifest file
+    When I put '/bags/test-bag/versions/test/contents/data/grass.jpg' using file 'data/grass.jpg' from fixture 'good-bag'
+    Then the response status should be 400
+    And the version with id 'test' for the bag with id 'test-bag' should not have content file 'data/grass.jpg'
+
+  Scenario: Try to upload content file with bag files but with no manifest file
+    Given PENDING
+
+  Scenario: Upload content file with bag files and manifest file
+    Given PENDING
+
+  Scenario: Try to upload content file with incorrect checksum
+    Given PENDING
+
+  Scenario: Try to upload content file not in a manifest
+    Given PENDING
+

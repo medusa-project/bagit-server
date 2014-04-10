@@ -82,7 +82,6 @@ class BagitServer < Sinatra::Base
           raise "Not yet implemented"
         end
 
-
       end
     end
 
