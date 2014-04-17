@@ -33,8 +33,8 @@ class Bag
   def self.tmp_directory
     unless defined?(@@tmp_directory)
       @@tmp_directory = File.join(self.root_directory, 'tmp')
-      FileUtils.mkdir_p(@@tmp_directory)
     end
+    FileUtils.mkdir_p(@@tmp_directory)
     @@tmp_directory
   end
 
