@@ -1,8 +1,9 @@
 module BagInfoFileUtilities
   module_function
 
-  def valid_bag_info_file?(file)
-    lines = File.readlines(file)
+  def valid_bag_info_file?(file, encoding)
+    encoding ||= 'UTF-8'
+    lines = File.readlines(file, encoding)
     return true if lines.length == 0
     first_line = lines.shift
     return false unless element_starting_line?(first_line)

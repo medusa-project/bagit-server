@@ -166,7 +166,7 @@ class Version < Object
   end
 
   def verify_bag_info_file
-    raise BadBagInfoFileException unless BagInfoFileUtilities.valid_bag_info_file?(self.bag_info_file_path)
+    raise BadBagInfoFileException unless BagInfoFileUtilities.valid_bag_info_file?(self.bag_info_file_path, self.tag_file_encoding)
   end
 
 end
