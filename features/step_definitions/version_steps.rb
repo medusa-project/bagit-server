@@ -41,15 +41,33 @@ And(/^the version with id '(.*)' for the bag with id '(.*)' should have an? '(.*
   expect(manifest.manifest_files.count.to_s).to eq(file_count)
 end
 
+And(/^the version with id '(.*)' for the bag with id '(.*)' should have an? '(.*)' tag manifest with (\d+) files$/) do |version_id, bag_id, checksum_algorithm, file_count|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  tag_manifest = version.tag_manifests.first(algorithm: checksum_algorithm)
+  expect(tag_manifest).to be_a(TagManifest)
+  expect(tag_manifest.tag_manifest_files.count.to_s).to eq(file_count)
+end
+
 And(/^the version with id '(.*)' for the bag with id '(.*)' should not have an? '(.*)' manifest$/) do |version_id, bag_id, checksum_algorithm|
   version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
   manifest = version.manifests.first(algorithm: checksum_algorithm)
   expect(manifest).to be_nil
 end
 
+And(/^the version with id '(.*)' for the bag with id '(.*)' should not have an? '(.*)' tag manifest$/) do |version_id, bag_id, checksum_algorithm|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  tag_manifest = version.tag_manifests.first(algorithm: checksum_algorithm)
+  expect(tag_manifest).to be_nil
+end
+
 And(/^the version with id '(.*)' for the bag with id '(.*)' updates its manifest '(.*)'$/) do |version_id, bag_id, manifest_file|
   version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
   version.update_manifest_if_manifest(manifest_file)
+end
+
+And(/^the version with id '(.*)' for the bag with id '(.*)' updates its tag manifest '(.*)'$/) do |version_id, bag_id, tag_manifest_file|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  version.update_tag_manifest_if_tag_manifest(tag_manifest_file)
 end
 
 Then(/^I can upload to the version with id '(.*)' for the bag with id '(.*)' when in validation states:$/) do |version_id, bag_id, table|
