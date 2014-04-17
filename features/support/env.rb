@@ -25,7 +25,7 @@ class BagitServerWorld
 end
 
 def last_json
-  page.source
+  last_response.body
 end
 
 def fixture_root

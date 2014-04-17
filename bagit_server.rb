@@ -48,7 +48,11 @@ class BagitServer < Sinatra::Base
     namespace '/versions/:version_id' do
       before do
         @version = @bag.versions.first(version_id: params[:version_id])
-        halt(404, "Version #{params[:version_id]} not found") unless @version
+j        halt(404, "Version #{params[:version_id]} not found") unless @version
+      end
+
+      get '/validation' do
+        [200, {'Content-Type' => 'application/json'}, @version.validation.to_json]
       end
 
       namespace '/contents' do

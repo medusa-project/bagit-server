@@ -4,6 +4,7 @@ require 'dm-constraints'
 require 'fileutils'
 require_relative 'manifest'
 require_relative 'exceptions'
+require_relative 'validation'
 require 'uuid'
 
 class Version < Object
@@ -15,8 +16,13 @@ class Version < Object
 
   belongs_to :bag
   has n, :manifests, :constraint => :destroy
+  has 1, :validation, :constraint => :destroy
 
   validates_presence_of :version_id
+
+  before :create do
+    self.validation = Validation.new
+  end
 
   after :create do
     FileUtils.mkdir_p(self.path)
