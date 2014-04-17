@@ -5,6 +5,8 @@ require 'fileutils'
 require_relative 'manifest'
 require_relative 'exceptions'
 require_relative 'validation'
+require_relative 'bagit_file_utilities'
+require_relative 'bag_info_file_utilities'
 require 'uuid'
 
 class Version < Object
@@ -13,6 +15,7 @@ class Version < Object
   property :id, Serial
   property :version_id, String, :required => true
   property :bag_id, Integer, :required => true
+  property :tag_file_encoding, String
 
   belongs_to :bag
   has n, :manifests, :constraint => :destroy
@@ -155,6 +158,15 @@ class Version < Object
   def validation_status=(status)
     self.validation.status = status
     self.validation.save!
+  end
+
+  def verify_bagit_file
+    raise BadBagitFileException unless BagitFileUtilities.valid_bagit_file?(self.bagit_file_path)
+    self.tag_file_encoding = BagitFileUtilities.encoding(self.bagit_file_path).to_s
+  end
+
+  def verify_bag_info_file
+    raise BadBagInfoFileException unless BagInfoFileUtilities.valid_bag_info_file?(self.bag_info_file_path)
   end
 
 end

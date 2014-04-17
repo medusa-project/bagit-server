@@ -48,7 +48,7 @@ class BagitServer < Sinatra::Base
     namespace '/versions/:version_id' do
       before do
         @version = @bag.versions.first(version_id: params[:version_id])
-j        halt(404, "Version #{params[:version_id]} not found") unless @version
+        j halt(404, "Version #{params[:version_id]} not found") unless @version
       end
 
       get '/validation' do
@@ -66,12 +66,24 @@ j        halt(404, "Version #{params[:version_id]} not found") unless @version
         #for these files there are no prerequisites
         #TODO possibly use custom matcher
         put '/bagit.txt' do
-          @version.protected_write_to_path('bagit.txt', request.body)
+          begin
+            @version.protected_write_to_path('bagit.txt', request.body) do
+              @version.verify_bagit_file
+            end
+          rescue BadBagitFileException
+            halt [400, "Invalid bagit.txt file."]
+          end
           [201, 'Content written']
         end
 
         put '/bag-info.txt' do
-          @version.protected_write_to_path('bag-info.txt', request.body)
+          begin
+            @version.protected_write_to_path('bag-info.txt', request.body) do
+              @version.verify_bag_info_file
+            end
+          rescue BadBagInfoFileException
+            halt [400, "Invalid bag-info.txt file"]
+          end
           [201, 'Content written']
         end
 
@@ -92,7 +104,7 @@ j        halt(404, "Version #{params[:version_id]} not found") unless @version
           halt [400, 'Version does not yet have both bagit.txt and bag-info.txt'] unless @version.has_bag_files?
           halt [400, 'Version does not have a manifest'] unless @version.manifests.count > 0
           splat = params[:splat]
-          path = File.join('data' , splat)
+          path = File.join('data', splat)
           begin
             @version.protected_write_to_path(path, request.body) do
               @version.verify_data_file(path)

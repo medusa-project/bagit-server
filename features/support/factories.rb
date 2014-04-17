@@ -14,6 +14,7 @@ FactoryGirl.define do
   factory :version do
     sequence(:version_id) { |n| "version-#{n}" }
     bag
+    tag_file_encoding 'UTF-8'
   end
 
 end

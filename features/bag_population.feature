@@ -10,11 +10,22 @@ Feature: Bag population
     When I put '/bags/test-bag/versions/test/contents/bagit.txt' using file 'bagit.txt' from fixture 'good-bag'
     Then the response status should be 201
     And the version with id 'test' for the bag with id 'test-bag' should have content file 'bagit.txt'
+    And the version with id 'test' for the bag with id 'test-bag' should have tag file encoding 'UTF-8'
+
+  Scenario: Upload invalid bagit.txt
+    When I put '/bags/test-bag/versions/test/contents/bagit.txt' using file 'manifest-md5.txt' from fixture 'good-bag'
+    Then the response status should be 400
+    And the version with id 'test' for the bag with id 'test-bag' should not have content file 'bagit.txt'
 
   Scenario: Upload bag-info.txt
     When I put '/bags/test-bag/versions/test/contents/bag-info.txt' using file 'bag-info.txt' from fixture 'good-bag'
     Then the response status should be 201
     And the version with id 'test' for the bag with id 'test-bag' should have content file 'bag-info.txt'
+
+  Scenario: Upload invalid bag-info.txt
+    When I put '/bags/test-bag/versions/test/contents/bag-info.txt' using file 'manifest-md5.txt' from fixture 'good-bag'
+    Then the response status should be 400
+    And the version with id 'test' for the bag with id 'test-bag' should not have content file 'bag-info.txt'
 
   Scenario: Upload top level file without bag files being present
     When I put '/bags/test-bag/versions/test/contents/extra-file' using file 'extra-file' from fixture 'good-bag'

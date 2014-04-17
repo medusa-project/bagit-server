@@ -10,6 +10,14 @@ class BadManifestException < Exception
 
 end
 
+class BadBagitFileException < Exception
+
+end
+
+class BadBagInfoFileException < Exception
+
+end
+
 class FileNotFound < Exception
 
 end
