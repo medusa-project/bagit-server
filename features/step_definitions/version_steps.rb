@@ -49,10 +49,8 @@ end
 
 Then(/^I can upload to the version with id '(.*)' for the bag with id '(.*)' when in validation states:$/) do |version_id, bag_id, table|
   version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
-  validation = version.validation
   table.headers.each do |validation_status|
-    validation.status = validation_status.to_sym
-    validation.save!
+    version.validation_status = validation_status
     step "I put '/bags/#{bag_id}/versions/#{version_id}/contents/bagit.txt' using file 'bagit.txt' from fixture 'good-bag'"
     step "the response status should be 201"
   end
@@ -60,10 +58,8 @@ end
 
 Then(/^I cannot upload to the version with id '(.*)' for the bag with id '(.*)' when in validation states:$/) do |version_id, bag_id, table|
   version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
-  validation = version.validation
   table.headers.each do |validation_status|
-    validation.status = validation_status.to_sym
-    validation.save!
+    version.validation_status = validation_status
     step "I put '/bags/#{bag_id}/versions/#{version_id}/contents/bagit.txt' using file 'bagit.txt' from fixture 'good-bag'"
     step "the response status should be 405"
   end
@@ -84,9 +80,7 @@ Then(/^I cannot delete from a version when in validation states:$/) do |table|
     step "the bag with id 'test' has a version with id '#{validation_status}'"
     step "the version with id '#{validation_status}' for the bag with id 'test' has contents the fixture 'good-bag'"
     step "the version with id '#{validation_status}' for the bag with id 'test' updates its manifest 'manifest-md5.txt'"
-    validation = Bag.first(bag_id: 'test').versions.first(version_id: validation_status).validation
-    validation.status = validation_status
-    validation.save!
+    Bag.first(bag_id: 'test').versions.first(version_id: validation_status).validation_status = validation_status
     step "I delete '/bags/test/versions/#{validation_status}/contents/bagit.txt'"
     step 'the response status should be 405'
   end
