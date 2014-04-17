@@ -109,6 +109,7 @@ class Version < Object
     return unless algorithm = manifest_algorithm_or_nil(file)
     manifest = self.manifests.first(algorithm: algorithm) || self.manifests.create(algorithm: algorithm)
     manifest.update_from_file
+    self.validation_status = :unvalidated
   end
 
   #Return nil if the path is not for a manifest; otherwise retun the algorithm string
@@ -140,11 +141,20 @@ class Version < Object
   end
 
   def accepts_content?
-    [:unvalidated, :invalid].include?(self.validation.status)
+    [:unvalidated, :invalid].include?(self.validation_status)
   end
 
   def accepts_content_deletion?
-    [:unvalidated, :invalid].include?(self.validation.status)
+    [:unvalidated, :invalid].include?(self.validation_status)
+  end
+
+  def validation_status
+    self.validation.status
+  end
+
+  def validation_status=(status)
+    self.validation.status = status
+    self.validation.save!
   end
 
 end
