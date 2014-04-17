@@ -89,3 +89,10 @@ Feature: Bag population
     Then the response status should be 400
     And the version with id 'test' for the bag with id 'test-bag' should not have content file 'data/weeds.jpg'
 
+  Scenario: Allow upload to version in certain states
+    Then I can upload to the version with id 'test' for the bag with id 'test-bag' when in validation states:
+      | unvalidated | invalid |
+
+  Scenario: Disallow upload to version in certain states
+    Then I cannot upload to the version with id 'test' for the bag with id 'test-bag' when in validation states:
+      | valid | validating | uploading | committed |

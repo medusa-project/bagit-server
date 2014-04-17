@@ -138,4 +138,8 @@ class Version < Object
     yield content_path
   end
 
+  def accepts_content?
+    [:unvalidated, :invalid].include?(self.validation.status)
+  end
+
 end

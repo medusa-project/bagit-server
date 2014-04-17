@@ -56,6 +56,13 @@ j        halt(404, "Version #{params[:version_id]} not found") unless @version
       end
 
       namespace '/contents' do
+
+        #check if uploading is allowed - if so pass, otherwise return a 405
+        put '/*' do
+          halt(405, "Version #{params[:version]} not in a state to accept content") unless @version.accepts_content?
+          pass
+        end
+
         #for these files there are no prerequisites
         #TODO possibly use custom matcher
         put '/bagit.txt' do

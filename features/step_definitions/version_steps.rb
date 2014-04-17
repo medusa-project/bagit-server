@@ -47,6 +47,29 @@ And(/^the version with id '(.*)' for the bag with id '(.*)' updates its manifest
   version.update_manifest_if_manifest(manifest_file)
 end
 
+Then(/^I can upload to the version with id '(.*)' for the bag with id '(.*)' when in validation states:$/) do |version_id, bag_id, table|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  validation = version.validation
+  table.headers.each do |validation_status|
+    validation.status = validation_status.to_sym
+    validation.save!
+    step "I put '/bags/#{bag_id}/versions/#{version_id}/contents/bagit.txt' using file 'bagit.txt' from fixture 'good-bag'"
+    step "the response status should be 201"
+  end
+end
+
+Then(/^I cannot upload to the version with id '(.*)' for the bag with id '(.*)' when in validation states:$/) do |version_id, bag_id, table|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  validation = version.validation
+  table.headers.each do |validation_status|
+    validation.status = validation_status.to_sym
+    validation.save!
+    step "I put '/bags/#{bag_id}/versions/#{version_id}/contents/bagit.txt' using file 'bagit.txt' from fixture 'good-bag'"
+    step "the response status should be 405"
+  end
+end
+
+
 def copy_fixture(fixture, path)
   Dir[fixture_path(fixture, '*')].each do |entry|
     next if entry == '.' or entry == '..'
