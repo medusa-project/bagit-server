@@ -11,7 +11,7 @@ class Version < Object
   include DataMapper::Resource
 
   property :id, Serial
-  property :version_id, String, :required => true, :unique => :bag_id
+  property :version_id, String, :required => true
   property :bag_id, Integer, :required => true
 
   belongs_to :bag
@@ -19,6 +19,7 @@ class Version < Object
   has 1, :validation, :constraint => :destroy
 
   validates_presence_of :version_id
+  validates_uniqueness_of :version_id, :scope => :bag_id
 
   before :create do
     self.validation = Validation.new
@@ -139,6 +140,10 @@ class Version < Object
   end
 
   def accepts_content?
+    [:unvalidated, :invalid].include?(self.validation.status)
+  end
+
+  def accepts_content_deletion?
     [:unvalidated, :invalid].include?(self.validation.status)
   end
 

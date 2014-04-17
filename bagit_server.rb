@@ -116,6 +116,7 @@ j        halt(404, "Version #{params[:version_id]} not found") unless @version
         end
 
         delete '/*' do
+          halt(405, "Version #{params[:version]} not in a state to delete content") unless @version.accepts_content_deletion?
           path = File.join(params[:splat])
           begin
             @version.delete_content(path)

@@ -27,3 +27,11 @@ Feature: Deletion of bag contents
   Scenario: Try to delete a file that is not present
     When I delete '/bags/test-bag/versions/test/contents/data/weeds.jpg'
     Then the response status should be 404
+
+  Scenario: Allow deletion from version in certain states
+    Then I can delete from a version when in validation states:
+      | unvalidated | invalid |
+
+  Scenario: Disallow deletion from version in certain states
+    Then I cannot delete from a version when in validation states:
+      | valid | validating | uploading | committed |

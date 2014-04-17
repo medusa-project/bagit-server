@@ -16,8 +16,8 @@ And(/^the content directory should exist for the bag '(.*)' for every version$/)
 end
 
 Given(/^the bag with id '(.*)' has a version with id '(.*)'$/) do |bag_id, version_id|
-  bag = FactoryGirl.create(:bag, :bag_id => bag_id)
-  FactoryGirl.create(:version, :bag => bag, :version_id => version_id)
+  bag = Bag.first(bag_id: bag_id) || FactoryGirl.create(:bag, :bag_id => bag_id)
+  bag.versions.first(version_id: version_id) || FactoryGirl.create(:version, :bag => bag, :version_id => version_id)
 end
 
 And(/^there should not be a bag with id '(.*)'$/) do |bag_id|

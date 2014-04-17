@@ -10,11 +10,12 @@ class Manifest < Object
   include DataMapper::Resource
 
   property :id, Serial
-  property :algorithm, String, :unique => :version_id, :required => true
+  property :algorithm, String, :required => true
   property :version_id, Integer, :required => true
 
   belongs_to :version
   has n, :manifest_files, :constraint => :destroy
+  validates_uniqueness_of :algorithm, :scope => :version_id
 
   #Synchronize the manifest files of this manifest from the corresponding
   #manifest file in the version's bag

@@ -69,6 +69,29 @@ Then(/^I cannot upload to the version with id '(.*)' for the bag with id '(.*)' 
   end
 end
 
+Then(/^I can delete from a version when in validation states:$/) do |table|
+  table.headers.each do |validation_status|
+    step "the bag with id 'test' has a version with id '#{validation_status}'"
+    step "the version with id '#{validation_status}' for the bag with id 'test' has contents the fixture 'good-bag'"
+    step "the version with id '#{validation_status}' for the bag with id 'test' updates its manifest 'manifest-md5.txt'"
+    step "I delete '/bags/test/versions/#{validation_status}/contents/bagit.txt'"
+    step 'the response status should be 204'
+  end
+end
+
+Then(/^I cannot delete from a version when in validation states:$/) do |table|
+  table.headers.each do |validation_status|
+    step "the bag with id 'test' has a version with id '#{validation_status}'"
+    step "the version with id '#{validation_status}' for the bag with id 'test' has contents the fixture 'good-bag'"
+    step "the version with id '#{validation_status}' for the bag with id 'test' updates its manifest 'manifest-md5.txt'"
+    validation = Bag.first(bag_id: 'test').versions.first(version_id: validation_status).validation
+    validation.status = validation_status
+    validation.save!
+    step "I delete '/bags/test/versions/#{validation_status}/contents/bagit.txt'"
+    step 'the response status should be 405'
+  end
+end
+
 
 def copy_fixture(fixture, path)
   Dir[fixture_path(fixture, '*')].each do |entry|
