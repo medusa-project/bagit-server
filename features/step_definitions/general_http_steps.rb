@@ -1,5 +1,5 @@
 When(/^I post '(.*)' with JSON fields:$/) do |url, table|
-  post url, nil, {:input => table.hashes.first.to_json, "Content-Type" => 'application/octet-stream'}
+  post url, nil, {:input => table.hashes.first.to_json, 'Content-Type' => 'application/octet-stream'}
 end
 
 When(/^I delete '(.*)'$/) do |url|
@@ -11,7 +11,7 @@ When(/^I get '(.*)'$/) do |url|
 end
 
 When(/^I put '(.*)' using file '(.*)' from fixture '(.*)'$/) do |url, file, fixture|
-  put url, nil, {:input => fixture_file_content(fixture, file), "Content-Type" => 'application/octet-stream'}
+  put url, nil, {:input => fixture_file_content(fixture, file), 'Content-Type' => 'application/octet-stream'}
 end
 
 Then(/^the response status should be (\d+)$/) do |code|

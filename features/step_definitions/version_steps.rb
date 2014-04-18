@@ -75,7 +75,7 @@ Then(/^I can upload to the version with id '(.*)' for the bag with id '(.*)' whe
   table.headers.each do |validation_status|
     version.validation_status = validation_status
     step "I put '/bags/#{bag_id}/versions/#{version_id}/contents/bagit.txt' using file 'bagit.txt' from fixture 'good-bag'"
-    step "the response status should be 201"
+    step 'the response status should be 201'
   end
 end
 
@@ -84,7 +84,7 @@ Then(/^I cannot upload to the version with id '(.*)' for the bag with id '(.*)' 
   table.headers.each do |validation_status|
     version.validation_status = validation_status
     step "I put '/bags/#{bag_id}/versions/#{version_id}/contents/bagit.txt' using file 'bagit.txt' from fixture 'good-bag'"
-    step "the response status should be 405"
+    step 'the response status should be 405'
   end
 end
 

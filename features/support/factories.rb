@@ -2,7 +2,7 @@ FactoryGirl.define do
 
   #this is needed to run the model callbacks with factory girl
   to_create do |instance|
-    if !instance.save
+    unless instance.save
       raise "Save failed for #{instance.class}"
     end
   end

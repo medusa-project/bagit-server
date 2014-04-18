@@ -30,7 +30,7 @@ class BagitServer < Sinatra::Base
     bag = Bag.ensure_bag(bag_id)
     halt(409, "Version already exists: #{version_id}") if bag and bag.versions.first(version_id: version_id)
     version = bag.ensure_version(version_id)
-    [201, {'Location' => "/bags/#{version.url_path}"}, "Hello"]
+    [201, {'Location' => "/bags/#{version.url_path}"}, 'Hello']
   end
 
   namespace '/bags/:bag_id' do
@@ -42,7 +42,7 @@ class BagitServer < Sinatra::Base
 
     delete do
       @bag.destroy
-      return [200, 'Bag deleted']
+      [200, 'Bag deleted']
     end
 
     namespace '/versions/:version_id' do
