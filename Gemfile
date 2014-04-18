@@ -7,6 +7,7 @@ gem 'bagit'
 gem 'uuid'
 gem 'datamapper'
 gem 'dm-postgres-adapter'
+gem 'cattr'
 
 group :test do
   gem 'cucumber'

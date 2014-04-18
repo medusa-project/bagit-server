@@ -15,7 +15,7 @@ module BagitFileUtilities
 
   def encoding_line?(line)
     line.match(/^Tag-File-Character-Encoding: (.*)$/)
-    return (Encoding.find($1) rescue false)
+    Encoding.find($1) rescue false
   end
 
   def encoding(file)

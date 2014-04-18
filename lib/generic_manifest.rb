@@ -1,7 +1,7 @@
 class GenericManifest < Object
 
   def file_name
-    raise "Subclass responsibility"
+    raise 'Subclass responsibility'
   end
 
   def path

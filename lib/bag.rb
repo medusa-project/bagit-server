@@ -4,6 +4,7 @@ require 'dm-constraints'
 require_relative 'version'
 require 'fileutils'
 require 'uuid'
+require 'cattr'
 
 class Bag
   include DataMapper::Resource
@@ -14,6 +15,8 @@ class Bag
   validates_presence_of :bag_id
 
   has n, :versions, :constraint => :destroy
+
+  cattr_accessor :root_dir, :tmp_dir
 
   before :create do
     FileUtils.mkdir_p(self.path)
@@ -26,7 +29,7 @@ class Bag
   end
 
   def self.root_directory
-    @@root_directory ||= "bags-#{BagitServer.settings.environment}"
+    self.root_dir ||= "bags-#{BagitServer.settings.environment}"
   end
 
   #we set this up inside of the environment's bag directory so that move operations will be fast

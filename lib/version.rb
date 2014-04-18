@@ -90,7 +90,7 @@ class Version < Object
     File.exists?(self.bagit_file_path) and File.exists?(self.bag_info_file_path)
   end
 
-  #if the file is in no manifest or fails checksumming for a manifest it is in then raise an exception. Otherwise true.
+  #if the file is in no manifest or fails check-summing for a manifest it is in then raise an exception. Otherwise true.
   def verify_data_file(path)
     containing_manifests = self.manifests.select { |manifest| manifest.manifest_files.first(path: path) }
     raise FileNotInManifestException unless containing_manifests.size > 0
@@ -123,7 +123,7 @@ class Version < Object
 
   #if the file is a manifest then update it. If it doesn't exist, create it.
   def update_if_manifest(file)
-    return unless algorithm = manifest_algorithm_or_nil(file)
+    return unless (algorithm = manifest_algorithm_or_nil(file))
     manifest = self.manifests.first(algorithm: algorithm) || self.manifests.create(algorithm: algorithm)
     manifest.update_from_file
     self.validation_status = :unvalidated
@@ -131,19 +131,19 @@ class Version < Object
 
   #the file is a tag manifest then update it. If it doesn't exist, create it.
   def update_if_tag_manifest(file)
-    return unless algorithm = tag_manifest_algorithm_or_nil(file)
+    return unless (algorithm = tag_manifest_algorithm_or_nil(file))
     tag_manifest = self.tag_manifests.first(algorithm: algorithm) || self.tag_manifests.create(algorithm: algorithm)
     tag_manifest.update_from_file
     self.validation_status = :unvalidated
   end
 
-  #Return nil if the path is not for a manifest; otherwise retun the algorithm string
+  #Return nil if the path is not for a manifest; otherwise return the algorithm string
   def manifest_algorithm_or_nil(path)
     path.match(/^manifest-(\w+)\.txt$/)
     $1
   end
 
-  #Return nil if the path is not for a tag manifest; otherwise retun the algorithm string
+  #Return nil if the path is not for a tag manifest; otherwise return the algorithm string
   def tag_manifest_algorithm_or_nil(path)
     path.match(/^tagmanifest-(\w+)\.txt$/)
     $1
@@ -159,7 +159,8 @@ class Version < Object
     with_content_path_for(path, error_unless_exists: true) do |full_path|
       raise FileNotFound unless File.exists?(full_path)
       File.delete(full_path)
-      if algorithm = manifest_algorithm_or_nil(path)
+      algorithm = manifest_algorithm_or_nil(path)
+      if algorithm
         self.manifests.first(algorithm: algorithm).destroy
       end
     end
