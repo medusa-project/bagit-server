@@ -97,6 +97,8 @@ class BagitServer < Sinatra::Base
             end
           rescue BadManifestException => e
             halt [400, "Manifest Error: #{e.message}"]
+          rescue BadTagManifestException => e
+            halt [400, "Tag Manifest Error: #{e.message}"]
           end
           [201, 'Content written']
         end

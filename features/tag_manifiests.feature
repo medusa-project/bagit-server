@@ -17,8 +17,8 @@ Feature: Tag manifest management
   Scenario: Initially upload invalid tag manifest file
     When I put '/bags/bag/versions/version/contents/tagmanifest-md5.txt' using file 'bag-info.txt' from fixture 'tag-bag'
     Then the response status should be 400
-    And the version with id 'test' for the bag with id 'test-bag' should not have content file 'tagmanifest-md5.txt'
-    And the version with id 'test' for the bag with id 'test-bag' should not have an 'md5' tag manifest
+    And the version with id 'version' for the bag with id 'bag' should not have content file 'tagmanifest-md5.txt'
+    And the version with id 'version' for the bag with id 'bag' should not have an 'md5' tag manifest
 
   Scenario: Try to upload invalid tag manifest file over valid tag manifest file
     Given the version with id 'version' for the bag with id 'bag' already has files from fixture 'tag-bag':
