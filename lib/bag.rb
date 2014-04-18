@@ -34,11 +34,9 @@ class Bag
 
   #we set this up inside of the environment's bag directory so that move operations will be fast
   def self.tmp_directory
-    unless defined?(@@tmp_directory)
-      @@tmp_directory = File.join(self.root_directory, 'tmp')
-    end
-    FileUtils.mkdir_p(@@tmp_directory)
-    @@tmp_directory
+    self.tmp_dir ||= File.join(self.root_directory, 'tmp')
+    FileUtils.mkdir_p(self.tmp_dir) unless Dir.exists?(self.tmp_dir)
+    self.tmp_dir
   end
 
   def self.ensure_bag(bag_id)
