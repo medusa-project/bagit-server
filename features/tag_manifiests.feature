@@ -9,13 +9,13 @@ Feature: Tag manifest management
       | bagit.txt | bag-info.txt |
 
   Scenario: Upload tag manifest file
-    When I put '/bags/test-bag/versions/test/contents/tagmanifest-md5.txt' using file 'tagmanifest-md5.txt' from fixture 'tag-bag'
+    When I put '/bags/bag/versions/version/contents/tagmanifest-md5.txt' using file 'tagmanifest-md5.txt' from fixture 'tag-bag'
     Then the response status should be 201
     And the version with id 'version' for the bag with id 'bag' should have content file 'tagmanifest-md5.txt'
     And the version with id 'version' for the bag with id 'bag' should have an 'md5' tag manifest with 5 files
 
   Scenario: Initially upload invalid tag manifest file
-    When I put '/bags/test-bag/versions/test/contents/tagmanifest-md5.txt' using file 'bag-info.txt' from fixture 'tag-bag'
+    When I put '/bags/bag/versions/version/contents/tagmanifest-md5.txt' using file 'bag-info.txt' from fixture 'tag-bag'
     Then the response status should be 400
     And the version with id 'test' for the bag with id 'test-bag' should not have content file 'tagmanifest-md5.txt'
     And the version with id 'test' for the bag with id 'test-bag' should not have an 'md5' tag manifest
@@ -24,7 +24,7 @@ Feature: Tag manifest management
     Given the version with id 'version' for the bag with id 'bag' already has files from fixture 'tag-bag':
       | tagmanifest-md5.txt |
     And the version with id 'version' for the bag with id 'bag' updates its tag manifest 'tagmanifest-md5.txt'
-    When I put '/bags/test-bag/versions/test/contents/tagmanifest-md5.txt' using file 'bag-info.txt' from fixture 'tag-bag'
+    When I put '/bags/bag/versions/version/contents/tagmanifest-md5.txt' using file 'bag-info.txt' from fixture 'tag-bag'
     Then the response status should be 400
     And the version with id 'version' for the bag with id 'bag' should have content file 'tagmanifest-md5.txt'
     And the version with id 'version' for the bag with id 'bag' should have an 'md5' tag manifest with 5 files
@@ -34,7 +34,7 @@ Feature: Tag manifest management
       | tagmanifest-md5.txt | tagmanifest-sha1.txt |
     And the version with id 'version' for the bag with id 'bag' updates its tag manifest 'tagmanifest-md5.txt'
     And the version with id 'version' for the bag with id 'bag' updates its tag manifest 'tagmanifest-sha1.txt'
-    When I put '/bags/test-bag/versions/test/contents/manifested-tag-file' using file 'extra-file' from fixture 'tag-bag'
+    When I put '/bags/bag/versions/version/contents/manifested-tag-file' using file 'extra-file' from fixture 'tag-bag'
     Then the response status should be 400
     And the version with id 'version' for the bag with id 'bag' should not have content file 'manifested-tag-file'
 
@@ -43,7 +43,7 @@ Feature: Tag manifest management
       | tagmanifest-md5.txt | tagmanifest-sha1.txt |
     And the version with id 'version' for the bag with id 'bag' updates its tag manifest 'tagmanifest-md5.txt'
     And the version with id 'version' for the bag with id 'bag' updates its tag manifest 'tagmanifest-sha1.txt'
-    When I put '/bags/test-bag/versions/test/contents/manifested-tag-file' using file 'manifested-tag-file' from fixture 'tag-bag'
+    When I put '/bags/bag/versions/version/contents/manifested-tag-file' using file 'manifested-tag-file' from fixture 'tag-bag'
     Then the response status should be 201
     And the version with id 'version' for the bag with id 'bag' should have content file 'manifested-tag-file'
 
@@ -52,6 +52,6 @@ Feature: Tag manifest management
       | tagmanifest-md5.txt | tagmanifest-sha1.txt |
     And the version with id 'version' for the bag with id 'bag' updates its tag manifest 'tagmanifest-md5.txt'
     And the version with id 'version' for the bag with id 'bag' updates its tag manifest 'tagmanifest-sha1.txt'
-    When I put '/bags/test-bag/versions/test/contents/extra-file' using file 'extra-file' from fixture 'tag-bag'
+    When I put '/bags/bag/versions/version/contents/extra-file' using file 'extra-file' from fixture 'tag-bag'
     Then the response status should be 201
     And the version with id 'version' for the bag with id 'bag' should have content file 'extra-file'
