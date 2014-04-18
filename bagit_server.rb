@@ -93,6 +93,7 @@ class BagitServer < Sinatra::Base
           begin
             @version.protected_write_to_path(file, request.body) do
               @version.update_manifest_if_manifest(file)
+              @version.update_tag_manifest_if_tag_manifest(file)
             end
           rescue BadManifestException => e
             halt [400, "Manifest Error: #{e.message}"]

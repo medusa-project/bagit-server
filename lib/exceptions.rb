@@ -10,6 +10,10 @@ class BadManifestException < Exception
 
 end
 
+class BadTagManifestException < Exception
+
+end
+
 class BadBagitFileException < Exception
 
 end

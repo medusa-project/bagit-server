@@ -3,6 +3,7 @@ require 'dm-validations'
 require 'dm-constraints'
 require 'fileutils'
 require_relative 'manifest'
+require_relative 'tag_manifest'
 require_relative 'exceptions'
 require_relative 'validation'
 require_relative 'bagit_file_utilities'
@@ -19,6 +20,7 @@ class Version < Object
 
   belongs_to :bag
   has n, :manifests, :constraint => :destroy
+  has n, :tag_manifests, :constraint => :destroy
   has 1, :validation, :constraint => :destroy
 
   validates_presence_of :version_id
@@ -115,9 +117,23 @@ class Version < Object
     self.validation_status = :unvalidated
   end
 
+  #the file is a tag manifest then update it. If it doesn't exist, create it.
+  def update_tag_manifest_if_tag_manifest(file)
+    return unless algorithm = tag_manifest_algorithm_or_nil(file)
+    tag_manifest = self.tag_manifests.first(algorithm: algorithm) || self.tag_manifests.create(algorithm: algorithm)
+    tag_manifest.update_from_file
+    self.validation_status = :unvalidated
+  end
+
   #Return nil if the path is not for a manifest; otherwise retun the algorithm string
   def manifest_algorithm_or_nil(path)
     path.match(/^manifest-(\w+)\.txt$/)
+    $1
+  end
+
+  #Return nil if the path is not for a tag manifest; otherwise retun the algorithm string
+  def tag_manifest_algorithm_or_nil(path)
+    path.match(/^tagmanifest-(\w+)\.txt$/)
     $1
   end
 
