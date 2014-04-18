@@ -42,7 +42,7 @@ class BagitServer < Sinatra::Base
 
     delete do
       @bag.destroy
-      return [200, "Bag deleted"]
+      return [200, 'Bag deleted']
     end
 
     namespace '/versions/:version_id' do
@@ -71,7 +71,7 @@ class BagitServer < Sinatra::Base
               @version.verify_bagit_file
             end
           rescue BadBagitFileException
-            halt [400, "Invalid bagit.txt file."]
+            halt [400, 'Invalid bagit.txt file.']
           end
           [201, 'Content written']
         end
@@ -82,7 +82,7 @@ class BagitServer < Sinatra::Base
               @version.verify_bag_info_file
             end
           rescue BadBagInfoFileException
-            halt [400, "Invalid bag-info.txt file"]
+            halt [400, 'Invalid bag-info.txt file']
           end
           [201, 'Content written']
         end
@@ -99,7 +99,7 @@ class BagitServer < Sinatra::Base
           rescue BadTagManifestException => e
             halt [400, "Tag Manifest Error: #{e.message}"]
           rescue IncorrectChecksumException
-            halt [400, "Incorrect Checksum"]
+            halt [400, 'Incorrect Checksum']
           end
           [201, 'Content written']
         end
