@@ -101,6 +101,16 @@ class Version < Object
     true
   end
 
+  #tag files don't need to be in any manifest, but if they are in any then the checksum has to match
+  def verify_tag_file(path)
+    containing_tag_manifests = self.tag_manifests.select {|tag_manifest| tag_manifest.tag_manifest_files.first(path: path)}
+    bad_checksum_tag_manifest = containing_tag_manifests.detect do |tag_manifest|
+      tag_manifest.digest(path) != tag_manifest.tag_manifest_files.first(path: path).checksum
+    end
+    raise IncorrectChecksumException if bad_checksum_tag_manifest
+    true
+  end
+
   def bagit_file_path
     File.join(self.path, 'bagit.txt')
   end

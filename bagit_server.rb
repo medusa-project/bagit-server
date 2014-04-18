@@ -94,11 +94,14 @@ class BagitServer < Sinatra::Base
             @version.protected_write_to_path(file, request.body) do
               @version.update_manifest_if_manifest(file)
               @version.update_tag_manifest_if_tag_manifest(file)
+              @version.verify_tag_file(file)
             end
           rescue BadManifestException => e
             halt [400, "Manifest Error: #{e.message}"]
           rescue BadTagManifestException => e
             halt [400, "Tag Manifest Error: #{e.message}"]
+          rescue IncorrectChecksumException
+            halt [400, "Incorrect Checksum"]
           end
           [201, 'Content written']
         end
