@@ -92,8 +92,6 @@ class BagitServer < Sinatra::Base
           file = params[:tag_file]
           begin
             @version.protected_write_to_path(file, request.body) do
-              @version.update_manifest_if_manifest(file)
-              @version.update_tag_manifest_if_tag_manifest(file)
               @version.verify_tag_file(file)
             end
           rescue BadManifestException => e
