@@ -103,8 +103,8 @@ class Version < Object
 
   #tag files don't need to be in any manifest, but if they are in any then the checksum has to match
   def verify_tag_file(path)
-    self.update_manifest_if_manifest(path)
-    self.update_tag_manifest_if_tag_manifest(path)
+    self.update_if_manifest(path)
+    self.update_if_tag_manifest(path)
     containing_tag_manifests = self.tag_manifests.select {|tag_manifest| tag_manifest.tag_manifest_files.first(path: path)}
     bad_checksum_tag_manifest = containing_tag_manifests.detect do |tag_manifest|
       tag_manifest.digest(path) != tag_manifest.tag_manifest_files.first(path: path).checksum
@@ -122,7 +122,7 @@ class Version < Object
   end
 
   #if the file is a manifest then update it. If it doesn't exist, create it.
-  def update_manifest_if_manifest(file)
+  def update_if_manifest(file)
     return unless algorithm = manifest_algorithm_or_nil(file)
     manifest = self.manifests.first(algorithm: algorithm) || self.manifests.create(algorithm: algorithm)
     manifest.update_from_file
@@ -130,7 +130,7 @@ class Version < Object
   end
 
   #the file is a tag manifest then update it. If it doesn't exist, create it.
-  def update_tag_manifest_if_tag_manifest(file)
+  def update_if_tag_manifest(file)
     return unless algorithm = tag_manifest_algorithm_or_nil(file)
     tag_manifest = self.tag_manifests.first(algorithm: algorithm) || self.tag_manifests.create(algorithm: algorithm)
     tag_manifest.update_from_file

@@ -7,7 +7,7 @@ This is a ruby/sinatra application designed to accept and verify bagit bags.
 Out first goal is to have a working implementation that meets our requirements, then to make
 it more efficient.
 
-## Todos
+## To dos
 
 Flesh out this README file
 
