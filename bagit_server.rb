@@ -48,7 +48,7 @@ class BagitServer < Sinatra::Base
     namespace '/versions/:version_id' do
       before do
         @version = @bag.versions.first(version_id: params[:version_id])
-        j halt(404, "Version #{params[:version_id]} not found") unless @version
+        halt(404, "Version #{params[:version_id]} not found") unless @version
       end
 
       get '/validation' do
