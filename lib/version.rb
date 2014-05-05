@@ -10,6 +10,7 @@ require_relative 'bagit_file_utilities'
 require_relative 'bag_info_file_utilities'
 require_relative 'fetch_file'
 require 'uuid'
+require 'bagit'
 
 class Version < Object
   include DataMapper::Resource
@@ -215,6 +216,26 @@ class Version < Object
     FetchFile.fetch_version(self)
   ensure
     self.validation_status = :unvalidated
+  end
+
+  #TODO This could take a long time and is a good candidate for delay
+  #TODO Store validation errors with the validation
+  def validate
+    original_status = self.validation_status
+    self.validation_status = :validating
+    bagit = BagIt::Bag.new(self.path)
+    unless bagit.complete?
+      self.validation_status = :invalid
+      return
+    end
+    unless bagit.consistent?
+      self.validation_status = :invalid
+      return
+    end
+    self.validation_status = :valid
+  rescue Exception
+    self.validation_status = original_status
+    raise
   end
 
 end

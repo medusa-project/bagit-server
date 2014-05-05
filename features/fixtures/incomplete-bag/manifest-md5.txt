@@ -1,0 +1,2 @@
+d4cc995d861474e7c17d7c526b3c0caa data/text/some-text.txt
+5668fb1b7f712fdea032be6e3e3ec1c8 data/grass.jpg
