@@ -57,17 +57,13 @@ class BagitServer < Sinatra::Base
 
       post '/fetch' do
         halt(405, "Version #{params[:version]} not in a state to fetch content") unless @version.accepts_content?
-        begin
-          @version.fetch
-        end
+        @version.fetch
         [200, 'Fetch started']
       end
 
       post '/validate' do
         halt(405, "Version #{params[:version]} not in a state to validate content") unless @version.accepts_content?
-        begin
-          @version.validate
-        end
+        @version.validate
         [200, 'Validation started']
       end
 
