@@ -25,3 +25,7 @@ Feature: Bagit fetch
     Then the response status should be 200
     Then the version with id 'version' for the bag with id 'fetch' should have content file 'data/grass.jpg'
     And the version with id 'version' for the bag with id 'fetch' should have content file 'data/return.xml'
+
+  Scenario: Fetch fails if the version is not in an appropriate state
+    Then I cannot fetch to the version with id 'version' for the bag with id 'fetch' when in validation states:
+      | valid | validating | uploading | committed |

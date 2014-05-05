@@ -88,6 +88,16 @@ Then(/^I cannot upload to the version with id '(.*)' for the bag with id '(.*)' 
   end
 end
 
+Then(/^I cannot fetch to the version with id '(.*)' for the bag with id '(.*)' when in validation states:$/) do |version_id, bag_id, table|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  table.headers.each do |validation_status|
+    version.validation_status = validation_status
+    step "I post '/bags/#{bag_id}/versions/#{version_id}/fetch'"
+    step 'the response status should be 405'
+  end
+end
+
+
 Then(/^I can delete from a version when in validation states:$/) do |table|
   table.headers.each do |validation_status|
     step "the bag with id 'test' has a version with id '#{validation_status}'"

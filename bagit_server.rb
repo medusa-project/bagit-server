@@ -56,6 +56,7 @@ class BagitServer < Sinatra::Base
       end
 
       post '/fetch' do
+        halt(405, "Version #{params[:version]} not in a state to fetch content") unless @version.accepts_content?
         begin
           @version.fetch
         end
