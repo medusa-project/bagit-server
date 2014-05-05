@@ -8,6 +8,7 @@ require_relative 'exceptions'
 require_relative 'validation'
 require_relative 'bagit_file_utilities'
 require_relative 'bag_info_file_utilities'
+require_relative 'fetch_file'
 require 'uuid'
 
 class Version < Object
@@ -105,6 +106,7 @@ class Version < Object
   def verify_tag_file(path)
     self.update_if_manifest(path)
     self.update_if_tag_manifest(path)
+    self.verify_if_fetch(path)
     containing_tag_manifests = self.tag_manifests.select {|tag_manifest| tag_manifest.tag_manifest_files.first(path: path)}
     bad_checksum_tag_manifest = containing_tag_manifests.detect do |tag_manifest|
       tag_manifest.digest(path) != tag_manifest.tag_manifest_files.first(path: path).checksum
@@ -119,6 +121,15 @@ class Version < Object
 
   def bag_info_file_path
     File.join(self.path, 'bag-info.txt')
+  end
+
+  def fetch_file_path
+    File.join(self.path, 'fetch.txt')
+  end
+
+  def verify_if_fetch(file)
+    return true unless FetchFile.fetch_file?(file)
+    raise BadFetchFileException unless FetchFile.is_valid?(self.fetch_file_path)
   end
 
   #if the file is a manifest then update it. If it doesn't exist, create it.
@@ -196,6 +207,14 @@ class Version < Object
 
   def verify_bag_info_file
     raise BadBagInfoFileException unless BagInfoFileUtilities.valid_bag_info_file?(self.bag_info_file_path, self.tag_file_encoding)
+  end
+
+  #TODO This could take a long time and is a good candidate for delay
+  def fetch
+    self.validation_status = :uploading
+    FetchFile.fetch_version(self)
+  ensure
+    self.validation_status = :unvalidated
   end
 
 end

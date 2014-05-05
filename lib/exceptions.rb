@@ -22,6 +22,10 @@ class BadBagInfoFileException < Exception
 
 end
 
+class BadFetchFileException < Exception
+
+end
+
 class FileNotFound < Exception
 
 end

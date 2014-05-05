@@ -55,6 +55,13 @@ class BagitServer < Sinatra::Base
         [200, {'Content-Type' => 'application/json'}, @version.validation.to_json]
       end
 
+      post '/fetch' do
+        begin
+          @version.fetch
+        end
+        [200, 'Fetched']
+      end
+
       namespace '/contents' do
 
         #check if uploading is allowed - if so pass, otherwise return a 405
@@ -100,6 +107,8 @@ class BagitServer < Sinatra::Base
             halt [400, "Tag Manifest Error: #{e.message}"]
           rescue IncorrectChecksumException
             halt [400, 'Incorrect Checksum']
+          rescue BadFetchFileException => e
+            halt [400, "Invalid fetch.txt file: #{e.message}"]
           end
           [201, 'Content written']
         end

@@ -109,6 +109,11 @@ Then(/^I cannot delete from a version when in validation states:$/) do |table|
   end
 end
 
+When(/^I fetch the version with id '(.*)' for the bag with id '(.*)'$/) do |version_id, bag_id|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  version.fetch
+end
+
 
 def copy_fixture(fixture, path)
   Dir[fixture_path(fixture, '*')].each do |entry|

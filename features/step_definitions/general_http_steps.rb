@@ -2,6 +2,10 @@ When(/^I post '(.*)' with JSON fields:$/) do |url, table|
   post url, nil, {:input => table.hashes.first.to_json, 'Content-Type' => 'application/octet-stream'}
 end
 
+When(/^I post '(.*)'$/) do |url|
+  post url
+end
+
 When(/^I delete '(.*)'$/) do |url|
   delete url
 end
