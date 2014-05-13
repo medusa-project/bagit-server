@@ -192,6 +192,14 @@ class Version < Object
     [:unvalidated, :invalid].include?(self.validation_status)
   end
 
+  def commitable?
+    self.validation_status == :valid
+  end
+
+  def commit
+    self.validation_status = :committed
+  end
+
   def validation_status
     self.validation.status
   end

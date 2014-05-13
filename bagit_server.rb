@@ -67,6 +67,12 @@ class BagitServer < Sinatra::Base
         [200, 'Validation started']
       end
 
+      post '/commit' do
+        halt(405, "Version #{params[:version]} not in a state to commit content") unless @version.commitable?
+        @version.commit
+        [200, 'Version committed']
+      end
+
       namespace '/contents' do
 
         #check if uploading is allowed - if so pass, otherwise return a 405

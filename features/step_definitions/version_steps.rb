@@ -70,6 +70,16 @@ And(/^the version with id '(.*)' for the bag with id '(.*)' updates its tag mani
   version.update_if_tag_manifest(tag_manifest_file)
 end
 
+Given(/^the version with id '(.*)' for the bag with id '(.*)' has validation status '(.*)'$/) do |version_id, bag_id, validation_status|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  version.validation_status = validation_status
+end
+
+And(/^the version with id '(.*)' for the bag with id '(.*)' should have validation status '(.*)'$/) do |version_id, bag_id, validation_status|
+  version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
+  expect(version.validation_status.to_s).to eq(validation_status)
+end
+
 Then(/^I can upload to the version with id '(.*)' for the bag with id '(.*)' when in validation states:$/) do |version_id, bag_id, table|
   version = Bag.first(bag_id: bag_id).versions.first(version_id: version_id)
   table.headers.each do |validation_status|
@@ -124,6 +134,17 @@ Then(/^I cannot delete from a version when in validation states:$/) do |table|
     step "the version with id '#{validation_status}' for the bag with id 'test' updates its manifest 'manifest-md5.txt'"
     Bag.first(bag_id: 'test').versions.first(version_id: validation_status).validation_status = validation_status
     step "I delete '/bags/test/versions/#{validation_status}/contents/bagit.txt'"
+    step 'the response status should be 405'
+  end
+end
+
+Then(/^I cannot commit a version with validation states:$/) do |table|
+  table.headers.each do |validation_status|
+    step "the bag with id 'test' has a version with id '#{validation_status}'"
+    step "the version with id '#{validation_status}' for the bag with id 'test' has contents the fixture 'good-bag'"
+    step "the version with id '#{validation_status}' for the bag with id 'test' updates its manifest 'manifest-md5.txt'"
+    Bag.first(bag_id: 'test').versions.first(version_id: validation_status).validation_status = validation_status
+    step "I post '/bags/test/versions/#{validation_status}/commit'"
     step 'the response status should be 405'
   end
 end
