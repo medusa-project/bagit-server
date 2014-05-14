@@ -108,7 +108,7 @@ class Version < Object
     self.update_if_manifest(path)
     self.update_if_tag_manifest(path)
     self.verify_if_fetch(path)
-    containing_tag_manifests = self.tag_manifests.select {|tag_manifest| tag_manifest.tag_manifest_files.first(path: path)}
+    containing_tag_manifests = self.tag_manifests.select { |tag_manifest| tag_manifest.tag_manifest_files.first(path: path) }
     bad_checksum_tag_manifest = containing_tag_manifests.detect do |tag_manifest|
       tag_manifest.digest(path) != tag_manifest.tag_manifest_files.first(path: path).checksum
     end
@@ -230,17 +230,16 @@ class Version < Object
   #TODO Store validation errors with the validation
   def validate
     original_status = self.validation_status
-    self.validation_status = :validating
-    bagit = BagIt::Bag.new(self.path)
-    unless bagit.complete?
-      self.validation_status = :invalid
-      return
+    self.transaction do
+      self.validation_status = :validating
+      self.validation.clear_errors
+      bagit = BagIt::Bag.new(self.path)
+      unless bagit.complete? and bagit.consistent?
+        self.validation.be_invalid_with_errors(bagit.errors)
+        return
+      end
+      self.validation_status = :valid
     end
-    unless bagit.consistent?
-      self.validation_status = :invalid
-      return
-    end
-    self.validation_status = :valid
   rescue Exception
     self.validation_status = original_status
     raise
