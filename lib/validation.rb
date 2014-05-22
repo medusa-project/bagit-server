@@ -20,11 +20,11 @@ class Validation < Object
   end
 
   def error_messages
-    self.validation_errors.all.collect { |error| error.message }
+    self.validation_errors.all.collect(&:message)
   end
 
   def clear_errors
-    self.validation_errors.all.each {|error| error.destroy}
+    self.validation_errors.all.destroy
   end
 
   def add_error(message)
@@ -46,6 +46,8 @@ class Validation < Object
   end
 
   #We want a slightly different form here than the bagit gem will provide
+  #the first instance of the version path can be deleted, leaving just the path
+  #within the bag
   def consistency_error_message(error_message)
     path = self.version.path + '/'
     error_message.sub(path, '')
