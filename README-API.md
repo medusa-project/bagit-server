@@ -60,6 +60,14 @@ This can be polled until the validation is complete.
 
     DELETE /bags/butter
 
+### Getting bag content
+
+    GET /bags/butter/versions/jam/contents/manifest-md5.txt
+
+    GET /bags/butter/versions/jam/contents/data/churn.txt
+
+    ...
+
 ## API
 
 Here we present a list of all of the actions that can be done. For each we'll
